@@ -391,7 +391,7 @@ Quantos subconjuntos (incluindo o conjunto vazio e o próprio conjunto) tem um c
 **Resolução:**
 
 1. Ao acrescentar o $n$-ésimo livro, cada subconjunto antigo gera dois: um sem e outro com esse livro. Logo $s_n = 2\,s_{n-1}$, com $s_0 = 1$ (só o vazio) — recorrência linear **homogênea** de **1ª ordem**.
-2. $s_1 = 2,\ s_2 = 4,\ s_3 = 8,\ s_4 = 16,\ s_5 = 32$.
+2. $s_1 = 2,\ s_2 = 4,\ s_3 = 8,\ s_4 = 16,\ s_5 = 32,\ s_6 = 2 \cdot 32 = 64$.
 3. Conferência pela fórmula fechada $s_n = 2^n$ (cada livro entra ou não entra — PFC): $s_6 = 2^6 = 64$.
 
 **Resposta:** 64  
@@ -796,7 +796,7 @@ O corredor da sala dos professores é uma faixa de $2 \times 7$ (2 de largura po
 
 1. Seja $t_n$ o número de coberturas de uma faixa $2 \times n$. Na ponta da faixa há um dominó atravessado na largura (sobra uma faixa $2 \times (n-1)$) ou dois dominós no sentido do comprimento, um em cada linha, ocupando juntos um quadrado $2 \times 2$ (sobra uma faixa $2 \times (n-2)$).
 2. Logo $t_n = t_{n-1} + t_{n-2}$ — recorrência linear homogênea de **2ª ordem**, com $t_1 = 1$ e $t_2 = 2$: a mesma da escada de 1 ou 2 degraus.
-3. $t_3 = 3,\ t_4 = 5,\ t_5 = 8,\ t_6 = 13$.
+3. $t_3 = 3,\ t_4 = 5,\ t_5 = 8,\ t_6 = 13,\ t_7 = t_6 + t_5 = 13 + 8 = 21$.
 4. Conferência por combinação ($k$ pares de dominós deitados): $\binom{7}{0}+\binom{6}{1}+\binom{5}{2}+\binom{4}{3} = 1+6+10+4$, logo $t_7 = 21$.
 
 **Resposta:** 21  
