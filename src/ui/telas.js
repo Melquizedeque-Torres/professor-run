@@ -1,5 +1,6 @@
 export function mostrarTela(id) {
   document.querySelectorAll('.tela').forEach((t) => t.classList.toggle('ativa', t.id === id));
+  document.querySelector(`#${id} .btn-primario`)?.focus(); // o teclado continua de onde o jogador está
 }
 
 export function mostrarHistoria({ titulo, texto, botao = 'Continuar' }) {

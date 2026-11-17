@@ -4,6 +4,7 @@ const LINHA_MAXIMA = 10;
 let linhaAlvo = 2; // as linhas 0 e 1 vêm prontas; o progresso vale para a partida inteira
 
 export function abrirQuadroPascal() {
+  const focoAnterior = document.activeElement;
   const m = document.getElementById('modal-pascal');
   const area = m.querySelector('#pascal-triangulo');
 
@@ -25,19 +26,39 @@ export function abrirQuadroPascal() {
     alvo.querySelector('input').focus();
   };
 
-  m.querySelector('#btn-pascal-conferir').onclick = () => {
+  const conferir = m.querySelector('#btn-pascal-conferir');
+  const fechar = () => {
+    m.classList.add('oculto');
+    if (focoAnterior && focoAnterior.isConnected) focoAnterior.focus();
+  };
+  const conferirLinhaAtual = () => {
+    if (conferir.disabled) return;
     const entradas = [...area.querySelectorAll('.alvo input')];
     const resultado = conferirLinha(linhaAlvo, entradas.map((i) => Number(i.value)));
     entradas.forEach((inp, i) => {
       inp.classList.toggle('erro', !resultado[i]);
       inp.classList.toggle('certo', resultado[i]);
     });
-    if (resultado.every(Boolean) && linhaAlvo < LINHA_MAXIMA) {
+    if (!resultado.every(Boolean)) return;
+    conferir.disabled = true; // evita conferir a mesma linha duas vezes antes do redesenho
+    if (linhaAlvo < LINHA_MAXIMA) {
       linhaAlvo += 1;
-      setTimeout(desenhar, 400);
+      setTimeout(() => { desenhar(); conferir.disabled = false; }, 400);
+    } else {
+      m.querySelector('#pascal-dica').textContent =
+        `Linha ${LINHA_MAXIMA} completa! Você dominou a relação de Stifel: cada número é a soma dos dois acima.`;
     }
   };
-  m.querySelector('#btn-pascal-fechar').onclick = () => m.classList.add('oculto');
+  conferir.disabled = false;
+  conferir.onclick = conferirLinhaAtual;
+  m.onkeydown = (ev) => {
+    if (ev.key === 'Escape') fechar();
+    else if (ev.key === 'Enter' && ev.target.matches('input.celula')) {
+      ev.preventDefault();
+      conferirLinhaAtual();
+    }
+  };
+  m.querySelector('#btn-pascal-fechar').onclick = fechar;
   desenhar();
   m.classList.remove('oculto');
 }

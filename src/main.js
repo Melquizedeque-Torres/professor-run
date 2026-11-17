@@ -17,6 +17,8 @@ let bancoPorFase = null;
 let jogo = null;
 let relogio = null;
 let pausado = true;
+let emSala = false; // só aceita cliques na sala enquanto ela está jogável
+let iniciando = false; // evita duas partidas começando ao mesmo tempo
 
 async function carregarBanco() {
   const resposta = await fetch('data/questoes.json');
@@ -25,34 +27,43 @@ async function carregarBanco() {
 }
 
 async function novaPartida() {
-  clearInterval(relogio);
-  jogo = criarJogo({ fases: FASES, bancoPorFase, tempoLimiteS: tempoLimite, maxErros: MAX_ERROS, rng: Math.random });
-  pausado = true;
-  await mostrarHistoria({ ...INTRO, botao: 'Procurar a saída' });
-  iniciarRelogio();
-  await entrarNaSala();
+  if (iniciando) return;
+  iniciando = true;
+  try {
+    clearInterval(relogio);
+    jogo = criarJogo({ fases: FASES, bancoPorFase, tempoLimiteS: tempoLimite, maxErros: MAX_ERROS, rng: Math.random });
+    pausado = true;
+    emSala = false;
+    await mostrarHistoria({ ...INTRO, botao: 'Procurar a saída' });
+    iniciarRelogio();
+    await entrarNaSala();
+  } finally {
+    iniciando = false;
+  }
 }
 
 async function entrarNaSala() {
   pausado = true;
+  emSala = false;
   const { fase } = jogo.estado();
   await mostrarHistoria({ ...ENTRADAS[fase.numero], botao: 'Entrar' });
   iniciarMusica(fase.numero);
   mostrarTela('tela-sala');
   desenharSala();
+  emSala = true;
   pausado = false;
 }
 
-function desenharSala() {
-  const e = jogo.estado();
+function desenharSala(e = jogo.estado()) {
   atualizarHud(e);
   renderizarSala(document.getElementById('cena'), e, {
     aoClicarObjeto: abrirObjeto,
-    aoClicarFerramenta: (id) => { if (id === 'pascal') { tocar('clique'); abrirQuadroPascal(); } },
+    aoClicarFerramenta: (id) => { if (emSala && id === 'pascal') { tocar('clique'); abrirQuadroPascal(); } },
   });
 }
 
 function abrirObjeto(objeto) {
+  if (!emSala) return;
   tocar('clique');
   abrirEnigma({ questao: jogo.estado().questaoAtual, objeto, aoEnviar: enviarResposta });
 }
@@ -64,6 +75,8 @@ function animar(el, classe) {
 }
 
 async function enviarResposta(valor) {
+  emSala = false;
+  const antes = jogo.estado();
   const r = jogo.responder(valor);
   const e = jogo.estado();
   if (r.correta) {
@@ -75,7 +88,11 @@ async function enviarResposta(valor) {
     if (e.status === 'jogando' && e.erros >= MAX_ERROS - 2) tocar('alarme');
   }
   if (r.status === 'jogando' && !r.avancouFase) desenharSala();
-  else atualizarHud(e);
+  else {
+    // a última tranca da sala aparece aberta antes do feedback e da transição
+    if (r.avancouFase) desenharSala({ ...antes, acertosFase: antes.acertosNecessarios });
+    atualizarHud(e);
+  }
 
   pausado = true; // o relógio não corre enquanto a resolução está aberta
   await mostrarFeedback({ correta: r.correta, questao: r.questao });
@@ -86,7 +103,9 @@ async function enviarResposta(valor) {
     await entrarNaSala();
     return;
   }
+  emSala = true;
   pausado = false;
+  document.querySelector('#cena .objeto:not(.resolvido)')?.focus(); // o teclado segue na sala após fechar o feedback
 }
 
 function transicao() {
@@ -117,6 +136,7 @@ function iniciarRelogio() {
 function finalizar(resultado) {
   clearInterval(relogio);
   pausado = true;
+  emSala = false;
   pararMusica();
   fecharEnigma();
   document.querySelectorAll('.modal').forEach((m) => m.classList.add('oculto'));

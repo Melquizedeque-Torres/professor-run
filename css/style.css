@@ -9,7 +9,7 @@ body { background: var(--fundo); color: var(--texto); font-family: var(--fonte);
 button { font: inherit; cursor: pointer; }
 .oculto { display: none !important; }
 
-#app { position: relative; min-height: 100vh; }
+#app { position: relative; min-height: 100vh; overflow-x: clip; } /* telas ocultas usam scale(1.02) e não podem alargar a página */
 .tela {
   position: absolute; inset: 0; overflow-y: auto; display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 1rem; padding: 16px; opacity: 0; visibility: hidden; transform: scale(1.02);
@@ -97,9 +97,14 @@ button { font: inherit; cursor: pointer; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 
-#pascal-triangulo { display: grid; gap: .35rem; justify-items: center; margin: 1rem 0; font-variant-numeric: tabular-nums; }
-.linha-pascal { display: flex; gap: .35rem; }
+#pascal-triangulo { display: flex; flex-direction: column; gap: .35rem; margin: 1rem 0; padding-bottom: .4rem; overflow-x: auto; font-variant-numeric: tabular-nums; }
+.linha-pascal { display: flex; gap: .35rem; width: max-content; margin-inline: auto; }
 .linha-pascal .celula { min-width: 2.6rem; text-align: center; padding: .25rem; border-radius: 6px; background: var(--painel-2); }
 .linha-pascal input.celula { border: 2px solid var(--borda); color: var(--texto); font: inherit; width: 2.8rem; }
 .linha-pascal input.celula.erro { border-color: var(--perigo); }
 .linha-pascal input.celula.certo { border-color: var(--sucesso); }
+@media (max-width: 480px) {
+  .linha-pascal { gap: .2rem; }
+  .linha-pascal .celula { min-width: 1.9rem; font-size: .85rem; padding: .2rem; }
+  .linha-pascal input.celula { width: 2.1rem; }
+}
