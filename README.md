@@ -4,7 +4,8 @@ Jogo digital (Projeto 2 de Matemática Discreta) em que o jogador escapa do pré
 faculdade resolvendo problemas de Análise Combinatória: **a resposta de cada problema
 é o código de um cadeado**.
 
-**Jogar:** <link do GitHub Pages>
+**Jogar:** https://melquizedeque-torres.github.io/professor-run/  
+**Código-fonte:** https://github.com/Melquizedeque-Torres/professor-run
 
 ## Narrativa e salas
 É véspera da P2 e o prédio da faculdade foi trancado pelo excêntrico Prof. Pascoal Fatorial:
