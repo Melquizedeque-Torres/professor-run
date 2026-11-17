@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+.superpowers/
+P2_MD_2026_2_INSTRUCAO_GAME.pdf
