@@ -60,4 +60,7 @@ export function abrirEnigma({ questao, objeto, aoEnviar }) {
   };
   document.addEventListener('keydown', ouvinteTeclado);
   m.classList.remove('oculto');
+  const caixa = m.querySelector('.modal-caixa');
+  caixa.tabIndex = -1;
+  caixa.focus(); // tira o foco do objeto da sala, para Enter/Espaço não reabrirem o enigma
 }

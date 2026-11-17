@@ -3,12 +3,16 @@ import { SALAS } from '../art/salas.js';
 const SELO_FECHADO = '<g class="selo-fechado"><circle r="14" fill="#ffcc4d"/><text y="5" text-anchor="middle" font-size="14">🔒</text></g>';
 const SELO_ABERTO = '<g><circle r="14" fill="#4ade80"/><text y="5" text-anchor="middle" font-size="14">🔓</text></g>';
 
+const enigmaAberto = () => !document.getElementById('modal-enigma').classList.contains('oculto');
+
 function ativar(el, acao) {
-  el.addEventListener('click', acao);
+  el.addEventListener('click', () => {
+    if (!enigmaAberto()) acao();
+  });
   el.addEventListener('keydown', (ev) => {
     if (ev.key === 'Enter' || ev.key === ' ') {
       ev.preventDefault();
-      acao();
+      if (!enigmaAberto()) acao();
     }
   });
 }
