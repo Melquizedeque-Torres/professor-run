@@ -1,7 +1,11 @@
 import { linhaPascal, conferirLinha } from '../engine/pascal.js';
 
 const LINHA_MAXIMA = 10;
-let linhaAlvo = 2; // as linhas 0 e 1 vêm prontas; o progresso vale para a partida inteira
+let linhaAlvo = 2; // as linhas 0 e 1 vêm prontas; o progresso vale para a partida inteira (reiniciarQuadroPascal zera)
+
+export function reiniciarQuadroPascal() {
+  linhaAlvo = 2;
+}
 
 export function abrirQuadroPascal() {
   const focoAnterior = document.activeElement;

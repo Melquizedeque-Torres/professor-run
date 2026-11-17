@@ -43,7 +43,7 @@
         <div class="hud-item"><span class="hud-rotulo">Fase</span><span id="hud-fase"></span></div>
         <div class="hud-item"><span class="hud-rotulo">Trancas</span><span id="hud-trancas"></span></div>
         <div class="hud-item"><span class="hud-rotulo">Acertos</span><span id="hud-acertos"></span></div>
-        <div class="hud-item"><span class="hud-rotulo">Alarme</span><span id="hud-alarme"></span></div>
+        <div class="hud-item"><span class="hud-rotulo">Alarme</span><span id="hud-alarme" role="img"></span></div>
         <div class="hud-item"><span class="hud-rotulo">Tempo</span><span id="hud-relogio"></span></div>
       </header>
       <div id="cena"></div>
@@ -101,6 +101,13 @@
     </div>
   </div>
   <div id="transicao" aria-hidden="true"></div>
-  <button id="btn-som" class="btn-som" aria-label="Ligar ou desligar o som">🔊</button>
+  <button id="btn-som" class="btn-som" aria-label="Ligar ou desligar o som" aria-pressed="false">🔊</button>
+  <script>
+    // abrir index.html direto (file://) bloqueia módulos ES e fetch: orienta o jogador
+    if (location.protocol === 'file:') {
+      document.getElementById('erro-carga').textContent = 'Abra o jogo por um servidor HTTP (npm run dev) ou pelo link publicado.';
+      document.getElementById('btn-comecar').disabled = true;
+    }
+  </script>
 </body>
 </html>

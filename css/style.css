@@ -62,6 +62,12 @@ button { font: inherit; cursor: pointer; }
 .tranca .haste { fill: none; stroke: #c9c9c9; stroke-width: 4; transition: transform .5s ease, stroke .4s; }
 .tranca.aberta rect { fill: var(--sucesso); }
 .tranca.aberta .haste { transform: translateY(-7px); stroke: var(--sucesso); }
+@keyframes abrir-tranca { 0% { transform: translateY(0) } 40% { transform: translateY(-12px) } 100% { transform: translateY(-7px) } }
+@keyframes pop-selo { 0% { transform: scale(.4) } 60% { transform: scale(1.4) } 100% { transform: scale(1) } }
+.tranca.recem .haste { animation: abrir-tranca .7s ease; }
+.tranca.recem rect { animation: brilho-tranca .9s ease; }
+@keyframes brilho-tranca { 0%, 100% { filter: none } 40% { filter: drop-shadow(0 0 8px var(--sucesso)) } }
+.selo-aberto.recem { animation: pop-selo .6s ease; }
 .tremer { animation: tremer .45s; }
 @keyframes tremer { 20%, 60% { transform: translateX(-8px) } 40%, 80% { transform: translateX(8px) } }
 

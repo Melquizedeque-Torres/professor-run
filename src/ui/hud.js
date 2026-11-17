@@ -11,6 +11,7 @@ export function atualizarHud(e) {
   const alarme = document.getElementById('hud-alarme');
   alarme.innerHTML = Array.from({ length: e.maxErros }, (_, i) => `<span class="nivel${i < e.erros ? ' ligado' : ''}"></span>`).join('');
   alarme.classList.toggle('critico', e.erros >= e.maxErros - 1);
+  alarme.setAttribute('role', 'img');
   alarme.setAttribute('aria-label', `${e.erros} de ${e.maxErros} erros`);
   const relogio = document.getElementById('hud-relogio');
   relogio.textContent = formatarTempo(e.tempoRestanteS);

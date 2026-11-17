@@ -1,4 +1,5 @@
 import { formatarNumero } from './formatos.js';
+import { aguardarClique } from './telas.js';
 import { renderizarMatematica, escreverTexto } from './matematica.js';
 
 export function mostrarFeedback({ correta, questao }) {
@@ -19,10 +20,5 @@ export function mostrarFeedback({ correta, questao }) {
   m.classList.remove('oculto');
   const botao = m.querySelector('#btn-feedback');
   botao.focus();
-  return new Promise((resolve) => {
-    botao.addEventListener('click', () => {
-      m.classList.add('oculto');
-      resolve();
-    }, { once: true });
-  });
+  return aguardarClique(botao).then(() => m.classList.add('oculto'));
 }

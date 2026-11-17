@@ -8,7 +8,7 @@ import { renderizarSala } from './ui/sala.js';
 import { abrirEnigma, fecharEnigma } from './ui/enigma.js';
 import { mostrarFeedback } from './ui/feedback.js';
 import { formatarTempo } from './ui/formatos.js';
-import { abrirQuadroPascal } from './ui/quadroPascal.js';
+import { abrirQuadroPascal, reiniciarQuadroPascal } from './ui/quadroPascal.js';
 import { tempoLimiteDaUrl } from './ui/parametros.js';
 import { tocar, iniciarMusica, pararMusica, alternarMudo, estaMudo } from './audio/audio.js';
 
@@ -19,6 +19,8 @@ let relogio = null;
 let pausado = true;
 let emSala = false; // só aceita cliques na sala enquanto ela está jogável
 let iniciando = false; // evita duas partidas começando ao mesmo tempo
+let resolvidos = new Set(); // índices dos objetos já resolvidos na sala atual
+let indiceAberto = null; // objeto cujo enigma está aberto
 
 async function carregarBanco() {
   const resposta = await fetch('data/questoes.json');
@@ -34,6 +36,8 @@ async function novaPartida() {
     jogo = criarJogo({ fases: FASES, bancoPorFase, tempoLimiteS: tempoLimite, maxErros: MAX_ERROS, rng: Math.random });
     pausado = true;
     emSala = false;
+    resolvidos = new Set();
+    reiniciarQuadroPascal();
     await mostrarHistoria({ ...INTRO, botao: 'Procurar a saída' });
     iniciarRelogio();
     await entrarNaSala();
@@ -45,6 +49,7 @@ async function novaPartida() {
 async function entrarNaSala() {
   pausado = true;
   emSala = false;
+  resolvidos = new Set();
   const { fase } = jogo.estado();
   await mostrarHistoria({ ...ENTRADAS[fase.numero], botao: 'Entrar' });
   iniciarMusica(fase.numero);
@@ -54,16 +59,20 @@ async function entrarNaSala() {
   pausado = false;
 }
 
-function desenharSala(e = jogo.estado()) {
+function desenharSala(e = jogo.estado(), opcoes = {}) {
   atualizarHud(e);
   renderizarSala(document.getElementById('cena'), e, {
+    resolvidos,
+    recemAberta: opcoes.recemAberta,
+    recemObjeto: opcoes.recemObjeto,
     aoClicarObjeto: abrirObjeto,
     aoClicarFerramenta: (id) => { if (emSala && id === 'pascal') { tocar('clique'); abrirQuadroPascal(); } },
   });
 }
 
-function abrirObjeto(objeto) {
+function abrirObjeto(objeto, indice) {
   if (!emSala) return;
+  indiceAberto = indice;
   tocar('clique');
   abrirEnigma({ questao: jogo.estado().questaoAtual, objeto, aoEnviar: enviarResposta });
 }
@@ -79,7 +88,9 @@ async function enviarResposta(valor) {
   const antes = jogo.estado();
   const r = jogo.responder(valor);
   const e = jogo.estado();
+  const indiceClicado = indiceAberto;
   if (r.correta) {
+    resolvidos.add(indiceClicado);
     tocar('tranca');
     tocar('acerto');
   } else {
@@ -87,11 +98,16 @@ async function enviarResposta(valor) {
     animar(document.getElementById('cena'), 'tremer');
     if (e.status === 'jogando' && e.erros >= MAX_ERROS - 2) tocar('alarme');
   }
-  if (r.status === 'jogando' && !r.avancouFase) desenharSala();
+  if (r.status === 'jogando' && !r.avancouFase) desenharSala(e, { recemAberta: r.correta, recemObjeto: indiceClicado });
   else {
     // a última tranca da sala aparece aberta antes do feedback e da transição
-    if (r.avancouFase) desenharSala({ ...antes, acertosFase: antes.acertosNecessarios });
-    atualizarHud(e);
+    if (r.avancouFase) {
+      const sala = { ...antes, acertosFase: antes.acertosNecessarios };
+      for (let i = 0; i < antes.acertosNecessarios; i++) resolvidos.add(i);
+      desenharSala(sala, { recemAberta: true, recemObjeto: indiceClicado });
+      // o HUD segue na sala recém-concluída até entrarNaSala()
+      atualizarHud({ ...sala, acertosTotal: e.acertosTotal, erros: e.erros, tempoRestanteS: e.tempoRestanteS });
+    } else atualizarHud(e);
   }
 
   pausado = true; // o relógio não corre enquanto a resolução está aberta
@@ -105,7 +121,10 @@ async function enviarResposta(valor) {
   }
   emSala = true;
   pausado = false;
-  document.querySelector('#cena .objeto:not(.resolvido)')?.focus(); // o teclado segue na sala após fechar o feedback
+  // o teclado segue na sala após fechar o feedback: volta ao objeto clicado, se ainda estiver trancado
+  const alvo = document.querySelector(`#cena .objeto[data-indice="${indiceClicado}"]:not(.resolvido)`)
+    ?? document.querySelector('#cena .objeto:not(.resolvido)');
+  alvo?.focus();
 }
 
 function transicao() {
@@ -161,7 +180,10 @@ function finalizar(resultado) {
 
 async function iniciar() {
   const btnSom = document.getElementById('btn-som');
-  const rotularSom = () => { btnSom.textContent = estaMudo() ? '🔇' : '🔊'; };
+  const rotularSom = () => {
+    btnSom.textContent = estaMudo() ? '🔇' : '🔊';
+    btnSom.setAttribute('aria-pressed', String(estaMudo()));
+  };
   rotularSom();
   btnSom.addEventListener('click', () => { alternarMudo(); rotularSom(); });
   document.getElementById('btn-como-jogar').addEventListener('click', () => {
