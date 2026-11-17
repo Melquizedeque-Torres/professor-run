@@ -2,7 +2,7 @@
 
 **Data:** 2026-11-17
 **Origem:** `P2_MD_2026_2_INSTRUCAO_GAME.pdf` (Projeto 2 – Escape Room, Jogo Digital de Análise Combinatória)
-**Status:** aguardando aprovação
+**Status:** aprovado e implementado (branch feat/professor-run)
 
 ---
 
