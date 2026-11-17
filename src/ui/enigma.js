@@ -3,6 +3,7 @@ import { renderizarMatematica, escreverTexto } from './matematica.js';
 import { tocar } from '../audio/audio.js';
 
 let ouvinteTeclado = null;
+let focoAnterior = null;
 const modal = () => document.getElementById('modal-enigma');
 
 function sacudir(el) {
@@ -15,10 +16,14 @@ export function fecharEnigma() {
   modal().classList.add('oculto');
   if (ouvinteTeclado) document.removeEventListener('keydown', ouvinteTeclado);
   ouvinteTeclado = null;
+  const volta = focoAnterior;
+  focoAnterior = null;
+  if (volta && volta.isConnected && !volta.classList.contains('resolvido')) volta.focus();
 }
 
 export function abrirEnigma({ questao, objeto, aoEnviar }) {
   fecharEnigma();
+  focoAnterior = document.activeElement;
   const m = modal();
   const cadeado = criarCadeado(10);
   const visor = m.querySelector('#cadeado-visor');

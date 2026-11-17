@@ -12,6 +12,7 @@ function ativar(el, acao) {
   el.addEventListener('keydown', (ev) => {
     if (ev.key === 'Enter' || ev.key === ' ') {
       ev.preventDefault();
+      ev.stopPropagation(); // a tecla que abre o enigma não pode chegar ao ouvinte do documento
       if (!enigmaAberto()) acao();
     }
   });
