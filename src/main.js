@@ -8,6 +8,7 @@ import { renderizarSala } from './ui/sala.js';
 import { abrirEnigma, fecharEnigma } from './ui/enigma.js';
 import { mostrarFeedback } from './ui/feedback.js';
 import { formatarTempo } from './ui/formatos.js';
+import { abrirQuadroPascal } from './ui/quadroPascal.js';
 import { tempoLimiteDaUrl } from './ui/parametros.js';
 import { tocar, iniciarMusica, pararMusica, alternarMudo, estaMudo } from './audio/audio.js';
 
@@ -47,7 +48,7 @@ function desenharSala() {
   atualizarHud(e);
   renderizarSala(document.getElementById('cena'), e, {
     aoClicarObjeto: abrirObjeto,
-    aoClicarFerramenta: () => {},
+    aoClicarFerramenta: (id) => { if (id === 'pascal') { tocar('clique'); abrirQuadroPascal(); } },
   });
 }
 

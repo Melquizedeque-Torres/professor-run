@@ -96,3 +96,10 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+#pascal-triangulo { display: grid; gap: .35rem; justify-items: center; margin: 1rem 0; font-variant-numeric: tabular-nums; }
+.linha-pascal { display: flex; gap: .35rem; }
+.linha-pascal .celula { min-width: 2.6rem; text-align: center; padding: .25rem; border-radius: 6px; background: var(--painel-2); }
+.linha-pascal input.celula { border: 2px solid var(--borda); color: var(--texto); font: inherit; width: 2.8rem; }
+.linha-pascal input.celula.erro { border-color: var(--perigo); }
+.linha-pascal input.celula.certo { border-color: var(--sucesso); }

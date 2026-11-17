@@ -39,6 +39,11 @@ export const SALAS = {
       { id: 'servidor', nome: 'Rack do servidor', x: 470, y: 110,
         desenho: `<rect width="100" height="215" rx="4" fill="#111" stroke="#444" stroke-width="3"/>${[0, 1, 2, 3, 4, 5].map((i) => `<rect x="10" y="${12 + i * 33}" width="80" height="24" fill="#222"/><circle cx="78" cy="${24 + i * 33}" r="4" fill="${i % 2 ? '#4ade80' : '#f87171'}" class="selo-fechado"/>`).join('')}${rotulo('Servidor', 50, 235)}` },
     ],
+    ferramenta: {
+      id: 'pascal', nome: 'Quadro de Pascal (ferramenta)', x: 220, y: 40,
+      desenho: `<rect width="210" height="150" rx="4" fill="#f5f5f0" stroke="#7f8c8d" stroke-width="6"/>${[['1'], ['1 1'], ['1 2 1'], ['1 3 3 1'], ['?  ?  ?  ?  ?']]
+        .map(([t], i) => `<text x="105" y="${30 + i * 24}" text-anchor="middle" font-family="monospace" font-size="16" fill="#2c3e50">${t}</text>`).join('')}${rotulo('Quadro de Pascal', 105, 172)}`,
+    },
   },
   4: {
     fundo: parede('#3d3a2f') + chao('#2e261c') + janela(530, 50) + mesa(40, 280, 260),
