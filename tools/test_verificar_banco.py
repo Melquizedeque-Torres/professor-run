@@ -64,7 +64,13 @@ class TestVerificar(unittest.TestCase):
 
     def test_resposta_nao_inteira(self):
         erros = verificar([questao(resposta=12.5)], forca_bruta={}, distribuicao=DIST_UM)
-        self.assertErro(erros, "F1-01", "resposta")
+        self.assertErro(erros, "F1-01", "resposta deve ser inteiro")
+
+    def test_resposta_fora_do_intervalo(self):
+        for valor in (0, -5, 10_000_000_000, True):
+            with self.subTest(resposta=valor):
+                erros = verificar([questao(resposta=valor)], forca_bruta={}, distribuicao=DIST_UM)
+                self.assertErro(erros, "F1-01", "resposta deve ser inteiro")
 
     def test_resolucao_com_um_passo(self):
         erros = verificar([questao(resolucao=["3 · 4 = 12"])], forca_bruta={}, distribuicao=DIST_UM)
